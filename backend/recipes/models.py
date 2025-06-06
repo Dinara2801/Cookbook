@@ -1,7 +1,7 @@
-import core.constants as cnsts
 from django.core.validators import MinValueValidator
 from django.db import models
 
+import core.constants as cnsts
 from users.models import User
 
 

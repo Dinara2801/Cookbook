@@ -1,5 +1,3 @@
-from core.serializers import ShortRecipeSerializer
-from core.short_links import decode_id
 from django.db.models import BooleanField, Exists, OuterRef, Sum, Value
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -13,6 +11,8 @@ from rest_framework.response import Response
 
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
+from core.serializers import ShortRecipeSerializer
+from core.short_links import decode_id
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag)
 from recipes.serializers import (IngredientSerializer, RecipeWriteSerializer,
