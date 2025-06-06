@@ -3,10 +3,10 @@ from django.conf.urls.static import static
 from django.urls import include, path
 from rest_framework import routers
 
-from .views import (AvatarView, FavoriteView, FollowView, FollowListView,
-                    RecipeViewSet, DownloadShoppingCartView, ShoppingCartView,
-                    UserViewSet, TagViewSet, IngredientViewSet,
-                    ShortRecipeLinkView, ShortLinkRedirectView,)
+from .views import (AvatarView, DownloadShoppingCartView, FavoriteView,
+                    FollowView, FollowListView, IngredientViewSet,
+                    RecipeViewSet, ShoppingCartView, ShortRecipeLinkView,
+                    ShortLinkRedirectView, TagViewSet, UserViewSet)
 
 router = routers.DefaultRouter()
 router.register(

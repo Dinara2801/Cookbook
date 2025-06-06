@@ -13,12 +13,10 @@ from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
 from core.serializers import ShortRecipeSerializer
 from core.short_links import decode_id
-
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe,
                             Recipe, ShoppingCart, Tag)
 from recipes.serializers import (IngredientSerializer, RecipeWriteSerializer,
                                  ShortRecipeLinkSerializer, TagSerializer)
-
 from users.models import Follow, User
 from users.serializers import (
     FollowReadSerializer,
