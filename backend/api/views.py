@@ -3,28 +3,25 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.views import View
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import (filters, generics, permissions,
-                            status, viewsets, views)
+from rest_framework import (filters, generics, permissions, status, views,
+                            viewsets)
 from rest_framework.decorators import action
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
-from .filters import RecipeFilter
-from .permissions import IsAuthorOrReadOnly
 from core.serializers import ShortRecipeSerializer
 from core.short_links import decode_id
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe,
-                            Recipe, ShoppingCart, Tag)
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from recipes.serializers import (IngredientSerializer, RecipeWriteSerializer,
                                  ShortRecipeLinkSerializer, TagSerializer)
 from users.models import Follow, User
-from users.serializers import (
-    FollowReadSerializer,
-    PasswordChangeSerializer,
-    UserAvatarUploadSerializer,
-    UserRegistrationSerializer,
-    UserSerializer
-)
+from users.serializers import (FollowReadSerializer, PasswordChangeSerializer,
+                               UserAvatarUploadSerializer,
+                               UserRegistrationSerializer, UserSerializer)
+
+from .filters import RecipeFilter
+from .permissions import IsAuthorOrReadOnly
 
 
 def add_remove_recipe(request, recipe_id, model, add_error_msg=''):

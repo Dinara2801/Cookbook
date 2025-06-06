@@ -4,9 +4,9 @@ from django.urls import include, path
 from rest_framework import routers
 
 from .views import (AvatarView, DownloadShoppingCartView, FavoriteView,
-                    FollowView, FollowListView, IngredientViewSet,
-                    RecipeViewSet, ShoppingCartView, ShortRecipeLinkView,
-                    ShortLinkRedirectView, TagViewSet, UserViewSet)
+                    FollowListView, FollowView, IngredientViewSet,
+                    RecipeViewSet, ShoppingCartView, ShortLinkRedirectView,
+                    ShortRecipeLinkView, TagViewSet, UserViewSet)
 
 router = routers.DefaultRouter()
 router.register(

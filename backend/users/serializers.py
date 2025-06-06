@@ -3,8 +3,8 @@ from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from api.validators import UsernameValidator
 import core.constants as cnsts
+from api.validators import UsernameValidator
 from core.serializers import Base64ImageField, ShortRecipeSerializer
 from recipes.models import Recipe
 from users.models import Follow, User

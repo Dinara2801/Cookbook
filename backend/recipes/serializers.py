@@ -1,11 +1,11 @@
 from rest_framework import serializers
 
 from api.validators import validate_ingredients, validate_tags
-from core.serializers import (BaseFavoriteShoppingCartSerializer,
-                              Base64ImageField)
+from core.serializers import (Base64ImageField,
+                              BaseFavoriteShoppingCartSerializer)
 from core.short_links import encode_id
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe,
-                            Recipe, ShoppingCart, Tag)
+from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
+                            ShoppingCart, Tag)
 from users.serializers import UserSerializer
 
 
