@@ -50,6 +50,11 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
+      - name: Copy needed files to root temp folder
+        run: |
+          cp infra/docker-compose.yml docker-compose.yml
+          cp infra/nginx.conf nginx.conf
+
       - name: Copy docker-compose.yml
         uses: appleboy/scp-action@master
         with:
@@ -57,7 +62,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: infra/docker-compose.yml
+          source: docker-compose.yml
           target: foodgram/
           overwrite: true
 
@@ -68,7 +73,7 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: infra/nginx.conf
+          source: nginx.conf
           target: foodgram/
           overwrite: true
 
