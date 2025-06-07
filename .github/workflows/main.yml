@@ -58,17 +58,24 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
+
+    - name: Prepare deploy folder
+      run: |
+        mkdir -p deploy
+        cp -r infra/* deploy/
+        cp -r docs deploy/
+      overwrite: true
     - name: List contents
-      run: ls -la infra/
-    - name: Copy all needed files to server
+      run: ls -la deploy/
+    - name: Copy files to server
       uses: appleboy/scp-action@master
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "infra/** docs/"
-        target: "foodgram"
+        source: deploy/
+        target: foodgram/
         overwrite: true
 
     - name: Executing remote ssh commands to deploy
