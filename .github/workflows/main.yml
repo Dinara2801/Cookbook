@@ -62,7 +62,7 @@ jobs:
     - name: Prepare deploy folder
       run: |
         mkdir -p deploy
-        cp -r infra/* deploy/
+        cp infra/docker-compose.yml infra/nginx.conf deploy/
         cp -r docs deploy/
     - name: List contents
       run: ls -la deploy/
@@ -73,9 +73,10 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: deploy/*
-        target: foodgram/
+        source: "*"
+        target: "foodgram"
         overwrite: true
+        workdir: "deploy"
 
     - name: Executing remote ssh commands to deploy
       uses: appleboy/ssh-action@master
