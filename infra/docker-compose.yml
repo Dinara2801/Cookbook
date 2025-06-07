@@ -28,7 +28,7 @@ services:
     image: dinarchik28/kittygram_frontend:latest
     restart: "on-failure"
     volumes:
-      - frontend_build:/app/result_build
+    - frontend_build:/app/build
 
   nginx:
     image: nginx:1.25.4-alpine
