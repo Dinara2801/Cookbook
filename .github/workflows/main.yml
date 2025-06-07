@@ -73,7 +73,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: deploy/
+        source: deploy/*
         target: foodgram/
         overwrite: true
 
