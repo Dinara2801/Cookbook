@@ -25,7 +25,7 @@ services:
       - media_volume:/media
 
   frontend:
-    image: dinarchik28/kittygram_frontend:latest
+    image: dinarchik28/foodgram_frontend:latest
     restart: "on-failure"
     volumes:
       - frontend_build:/app/result_build
