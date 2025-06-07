@@ -1,7 +1,8 @@
+[![Main Foodgram workflow](https://github.com/Dinara2801/foodgram/actions/workflows/main.yml/badge.svg)](https://github.com/Dinara2801/foodgram/actions/workflows/main.yml)
 
 # Проект Foodgram
 
-Foodgram — это сервис для создания, хранения и обмена рецептами. Позволяет пользователям создавать рецепты с ингредиентами и тегами, управлять ими, добавлять в избранное и в список покупок.
+Foodgram — это сервис для создания, хранения и обмена рецептами. Позволяет пользователям создавать рецепты с ингредиентами и тегами, управлять ими, добавлять в избранное и в список покупок. Проект доступен по адресу https://tastyideas.sytes.net/
 
 ## Описание проекта
 
@@ -69,6 +70,12 @@ pip install -r requirements.txt
 ```
 python3 manage.py migrate
 ```
+
+Заполнить базу данных: 
+ 
+``` 
+python manage.py import_data 
+``` 
 
 Запустить проект:
 
