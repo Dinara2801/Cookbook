@@ -58,7 +58,8 @@ jobs:
     steps:
     - name: Checkout repo
       uses: actions/checkout@v3
-
+    - name: List contents
+      run: ls -la infra/
     - name: Copy all needed files to server
       uses: appleboy/scp-action@master
       with:
