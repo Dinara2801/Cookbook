@@ -67,9 +67,7 @@ jobs:
         username: ${{ secrets.USER }}
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: |
-          infra/
-          docs/
+        source: "infra/** docs/"
         target: "foodgram"
         overwrite: true
 
