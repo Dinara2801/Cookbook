@@ -1,13 +1,12 @@
 FROM python:3.9
 WORKDIR /app
 
-COPY requirements.txt .
+COPY backend/requirements.txt ./requirements.txt
 
-RUN pip install -r requirements.txt
+RUN pip install -r requirements.txt --no-cache-dir
 
-COPY data ./data
-COPY backend ./backend
+COPY backend/. .
 
-WORKDIR /app/backend
+COPY data/ ./data/
 
 CMD ["gunicorn", "--bind", "0.0.0.0:8000", "foodgram_backend.wsgi"]
