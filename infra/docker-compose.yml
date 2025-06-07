@@ -4,6 +4,7 @@ volumes:
   pg_data_production:
   static_volume:
   media_volume:
+  frontend_build:
 
 services:
   db:
@@ -22,13 +23,13 @@ services:
     volumes:
       - static_volume:/staticfiles
       - media_volume:/media
-      - ./data/:/app/data/
 
   frontend:
     image: dinarchik28/kittygram_frontend:latest
-    restart: always
+    restart: "on-failure"
     volumes:
-      - ./frontend/:/app/result_build/
+      - frontend_build:/app/result_build
+
   nginx:
     image: nginx:1.25.4-alpine
     restart: always
@@ -39,7 +40,7 @@ services:
       - "8000:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/build:/usr/share/nginx/html/
+      - frontend_build:/usr/share/nginx/html/
       - ./docs/:/usr/share/nginx/html/api/docs/
       - static_volume:/staticfiles
       - media_volume:/media

@@ -7,44 +7,36 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
-      - name: Copy data/ into backend/ (for COPY to work)
-        run: |
-          cp -r ./data ./backend/
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to Docker 
-        uses: docker/login-action@v2
+      - uses: actions/checkout@v3
+
+      - uses: docker/setup-buildx-action@v2
+
+      - uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Push to DockerHub
-        uses: docker/build-push-action@v4
+
+      - uses: docker/build-push-action@v4
         with:
-          context: ./backend/
+          context: ./
+          file: ./backend/Dockerfile
           push: true
           tags: ${{ secrets.DOCKER_HUB_NICK }}/foodgram_backend:latest
 
   build_and_push_frontend:
     if: github.ref == 'refs/heads/main'
-    name: Push frontend Docker image to DockerHub
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      - uses: docker/setup-buildx-action@v2
 
-      - name: Login to Docker 
-        uses: docker/login-action@v2
+      - uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push to DockerHub
-        uses: docker/build-push-action@v4
+      - uses: docker/build-push-action@v4
         with:
           context: ./frontend/
           push: true
@@ -52,59 +44,58 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: 
+    needs:
       - build_and_push_backend
       - build_and_push_frontend
     steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Prepare deploy folder
-      run: |
-        mkdir -p deploy
-        cp infra/docker-compose.yml infra/nginx.conf deploy/
-        cp -r docs deploy/
-    - name: List contents
-      run: ls -la deploy/
-    - name: Copy files to server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "deploy/*"
-        target: "foodgram"
-        overwrite: true
-        workdir: "deploy"
+      - name: Prepare deploy folder
+        run: |
+          mkdir -p deploy
+          cp infra/docker-compose.yml infra/nginx.conf deploy/
+          cp -r docs deploy/
 
-    - name: Executing remote ssh commands to deploy
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        script: |
-          cd foodgram
-          sudo docker compose -f docker-compose.yml pull
-          sudo docker compose -f docker-compose.yml down
-          sudo docker compose -f docker-compose.yml up -d
-          sudo docker compose -f docker-compose.yml exec backend python manage.py migrate
-          sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic
-          sudo docker compose exec backend python manage.py import_data
+      - name: Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          source: "deploy/*"
+          target: "foodgram"
+          overwrite: true
+          workdir: "deploy"
+
+      - name: Execute remote deploy commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd foodgram
+            sudo docker compose pull
+            sudo docker compose down
+            sudo docker compose run --rm frontend npm run build
+            sudo docker compose up -d
+            sudo docker compose exec backend python manage.py migrate
+            sudo docker compose exec backend python manage.py collectstatic
+            sudo docker compose exec backend python manage.py import_data
 
   send_message:
     runs-on: ubuntu-latest
     needs: deploy
     steps:
-    - name: Send message
-      uses: appleboy/telegram-action@master
-      with:
-        to: ${{ secrets.TELEGRAM_TO }}
-        token: ${{ secrets.TELEGRAM_TOKEN }}
-        message: |
-          ✅ Деплой Foodgram выполнен!
-          Автор: ${{ github.actor }}
-          Коммит: ${{ github.event.head_commit.message }}
-          https://github.com/${{ github.repository }}/commit/${{ github.sha }}
+      - name: Send message
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_TO }}
+          token: ${{ secrets.TELEGRAM_TOKEN }}
+          message: |
+            ✅ Деплой Foodgram выполнен!
+            Автор: ${{ github.actor }}
+            Коммит: ${{ github.event.head_commit.message }}
+            https://github.com/${{ github.repository }}/commit/${{ github.sha }}
