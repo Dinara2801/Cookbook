@@ -64,7 +64,6 @@ jobs:
         mkdir -p deploy
         cp -r infra/* deploy/
         cp -r docs deploy/
-      overwrite: true
     - name: List contents
       run: ls -la deploy/
     - name: Copy files to server
