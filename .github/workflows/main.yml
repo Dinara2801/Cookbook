@@ -68,7 +68,8 @@ jobs:
         key: ${{ secrets.SSH_KEY }}
         passphrase: ${{ secrets.SSH_PASSPHRASE }}
         source: |
-          infra/*
+          infra/docker-compose.yml
+          infra/nginx.conf
           docs/
         target: "foodgram"
         overwrite: true
