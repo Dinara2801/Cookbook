@@ -58,8 +58,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: docker-compose.yml
-          target: foodgram/
+          source: "docker-compose.yml"
+          target: "foodgram"
           overwrite: true
 
       - name: Copy nginx.conf
@@ -70,8 +70,8 @@ jobs:
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: nginx.conf
-          target: foodgram/
+          source: "nginx.conf"
+          target: "foodgram"
           overwrite: true
 
       - name: Copy docs folder
@@ -83,7 +83,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: docs/
-          target: foodgram/
+          target: "foodgram"
           overwrite: true
 
       - name: Execute remote deploy commands
