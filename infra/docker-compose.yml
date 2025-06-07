@@ -29,6 +29,7 @@ services:
     restart: "on-failure"
     volumes:
       - frontend_build:/app/result_build
+    command: /bin/sh -c "npm run build && cp -r build/* /app/result_build/"
 
   nginx:
     image: nginx:1.25.4-alpine
