@@ -43,45 +43,45 @@ jobs:
           tags: ${{ secrets.DOCKER_HUB_NICK }}/foodgram_frontend:latest
 
   deploy:
-  runs-on: ubuntu-latest
-  needs:
-    - build_and_push_backend
-    - build_and_push_frontend
-  steps:
-    - uses: actions/checkout@v3
+    runs-on: ubuntu-latest
+    needs:
+      - build_and_push_backend
+      - build_and_push_frontend
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Prepare deploy folder
-      run: |
-        mkdir -p deploy
-        cp infra/docker-compose.yml infra/nginx.conf deploy/
-        cp -r docs deploy/
+      - name: Prepare deploy folder
+        run: |
+          mkdir -p deploy
+          cp infra/docker-compose.yml infra/nginx.conf deploy/
+          cp -r docs deploy/
 
-    - name: Copy files to server
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        source: "deploy/*"
-        target: "foodgram"
-        overwrite: true
+      - name: Copy files to server
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          source: "deploy/*"
+          target: "foodgram"
+          overwrite: true
 
-    - name: Execute remote deploy commands
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.HOST }}
-        username: ${{ secrets.USER }}
-        key: ${{ secrets.SSH_KEY }}
-        passphrase: ${{ secrets.SSH_PASSPHRASE }}
-        script: |
-          cd foodgram
-          sudo docker compose pull
-          sudo docker compose down
-          sudo docker compose run --rm frontend npm run build
-          sudo docker compose up -d
-          sudo docker compose exec backend python manage.py migrate
-          sudo docker compose exec backend python manage.py collectstatic --noinput
+      - name: Execute remote deploy commands
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          key: ${{ secrets.SSH_KEY }}
+          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+          script: |
+            cd foodgram
+            sudo docker compose pull
+            sudo docker compose down
+            sudo docker compose run --rm frontend npm run build
+            sudo docker compose up -d
+            sudo docker compose exec backend python manage.py migrate
+            sudo docker compose exec backend python manage.py collectstatic --noinput
 
   send_message:
     runs-on: ubuntu-latest
