@@ -50,41 +50,23 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Copy docker-compose.yml
-        uses: appleboy/scp-action@master
-        with:
-          context: ./
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "docker-compose.yml"
-          target: "foodgram"
-          overwrite: true
+      - name: Prepare deploy archive
+        run: |
+          mkdir -p deploy
+          cp infra/docker-compose.yml deploy/
+          cp infra/nginx.conf deploy/
+          cp -r docs deploy/
+          tar -cvf deploy.tar -C deploy .
 
-      - name: Copy nginx.conf
+      - name: Copy deploy archive to server
         uses: appleboy/scp-action@master
         with:
-          context: ./
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.SSH_KEY }}
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: "nginx.conf"
+          source: "deploy.tar"
           target: "foodgram"
-          overwrite: true
-
-      - name: Copy docs folder
-        uses: appleboy/scp-action@master
-        with:
-          context: ./
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
-          source: docs/
-          target: "foodgram"
-          overwrite: true
 
       - name: Execute remote deploy commands
         uses: appleboy/ssh-action@master
@@ -95,6 +77,8 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd foodgram
+            tar -xvf deploy.tar
+            rm deploy.tar
             sudo docker compose pull
             sudo docker compose down
             sudo docker compose run --rm frontend npm run build
