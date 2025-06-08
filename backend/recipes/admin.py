@@ -1,8 +1,11 @@
 from django.contrib import admin
 from django.contrib.auth.models import Group
+from django.core.exceptions import ValidationError
+from django.forms.models import BaseInlineFormSet
 from django.utils.safestring import mark_safe
 
-from .models import Favorite, Ingredient, IngredientInRecipe, Recipe, Tag
+from .models import (Favorite, Ingredient, IngredientInRecipe,
+                     Recipe, ShoppingCart, Tag)
 
 admin.site.unregister(Group)
 
@@ -19,8 +22,21 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = ('name',)
 
 
+class IngredientInRecipeInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        has_ingredient = any(
+            not form.cleaned_data.get('DELETE', False)
+            for form in self.forms
+            if form.cleaned_data.get('ingredient')
+        )
+        if not has_ingredient:
+            raise ValidationError('Добавьте хотя бы один ингредиент.')
+
+
 class IngredientInRecipeInline(admin.TabularInline):
     model = IngredientInRecipe
+    formset = IngredientInRecipeInlineFormSet
     extra = 1
     autocomplete_fields = ('ingredient',)
 
@@ -52,5 +68,19 @@ class RecipeAdmin(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'recipe')
+    list_display = ('id', 'user_username', 'recipe')
     search_fields = ('user__username', 'recipe__name')
+
+    def user_username(self, obj):
+        return obj.user.username
+    user_username.short_description = 'User'
+
+
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_username', 'recipe')
+    search_fields = ('user__username', 'recipe__name')
+
+    def user_username(self, obj):
+        return obj.user.username
+    user_username.short_description = 'User'

@@ -3,7 +3,7 @@ from django.contrib.auth.admin import UserAdmin
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
-from .models import User
+from .models import User, Follow
 
 
 @admin.register(User)
@@ -39,3 +39,17 @@ class CustomUserAdmin(UserAdmin):
         return 'Изображение отсутствует'
 
     image_preview.short_description = 'Просмотр изображения'
+
+
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user_username', 'following_username')
+    search_fields = ('user__username', 'following__username')
+
+    def user_username(self, obj):
+        return obj.user.username
+    user_username.short_description = 'User'
+
+    def following_username(self, obj):
+        return obj.following.username
+    following_username.short_description = 'Following'

@@ -5,8 +5,8 @@ from rest_framework import routers
 
 from .views import (AvatarView, DownloadShoppingCartView, FavoriteView,
                     FollowListView, FollowView, IngredientViewSet,
-                    RecipeViewSet, ShoppingCartView, ShortLinkRedirectView,
-                    ShortRecipeLinkView, TagViewSet, UserViewSet)
+                    RecipeViewSet, ShoppingCartView, ShortRecipeLinkView,
+                    TagViewSet, UserViewSet)
 
 router = routers.DefaultRouter()
 router.register(
@@ -81,8 +81,6 @@ recipes_urlpatterns = [
 urlpatterns = [
     path('users/', include(users_urlpatterns)),
     path('recipes/', include(recipes_urlpatterns)),
-    path('r/<str:encoded>/', ShortLinkRedirectView.as_view(),
-         name='recipe-shortlink-redirect'),
     path('', include(router.urls)),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),

@@ -99,12 +99,14 @@ DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
 
 DJANGO_DB_ENGINE=postgresql
-POSTGRES_DB=kittygram_db
-POSTGRES_USER=kittygram_user
+POSTGRES_DB=foodgram_db
+POSTGRES_USER=foodgram_user
 POSTGRES_PASSWORD=пароль
 
-DB_HOST=db
+DB_HOST=localhost
 DB_PORT=5432
+
+CSV_DATA_PATH=develop
 ```
 
 ## Автор

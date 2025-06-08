@@ -7,6 +7,10 @@ from django.db.models import ForeignKey
 
 from recipes.models import Ingredient
 
+
+CSV_DATA_PATH = os.getenv('CSV_DATA_PATH', '')
+
+
 FILE_MODEL_MAP = {
     'ingredients.csv': {
         'model': Ingredient,
@@ -22,10 +26,12 @@ class Command(BaseCommand):
         for filename, info in FILE_MODEL_MAP.items():
             model = info['model']
             field_names = info['fields']
-            file_path = os.path.join(
-                settings.BASE_DIR, 'data',
-                filename
-            )
+            file_path = os.path.join(settings.BASE_DIR, '..', 'data', filename)
+            if not CSV_DATA_PATH:
+                file_path = os.path.join(
+                    settings.BASE_DIR, 'data',
+                    filename
+                )
             with open(file_path, encoding='utf-8') as csvfile:
                 reader = csv.reader(csvfile)
                 data = []

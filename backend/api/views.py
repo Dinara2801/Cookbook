@@ -11,16 +11,17 @@ from rest_framework.response import Response
 
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
+from .serializers import (FollowReadSerializer, IngredientSerializer, 
+                          PasswordChangeSerializer, RecipeWriteSerializer,
+                          ShortRecipeLinkSerializer, TagSerializer,
+                          UserAvatarUploadSerializer,
+                          UserRegistrationSerializer, UserSerializer)
 from core.serializers import ShortRecipeSerializer
 from core.short_links import decode_id
 from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                             ShoppingCart, Tag)
-from recipes.serializers import (IngredientSerializer, RecipeWriteSerializer,
-                                 ShortRecipeLinkSerializer, TagSerializer)
+
 from users.models import Follow, User
-from users.serializers import (FollowReadSerializer, PasswordChangeSerializer,
-                               UserAvatarUploadSerializer,
-                               UserRegistrationSerializer, UserSerializer)
 
 
 def add_remove_recipe(request, recipe_id, model, add_error_msg=''):
