@@ -79,8 +79,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user.set_password(serializer.validated_data['new_password'])
         user.save()
 
-        return Response({'detail': 'Пароль успешно изменён.'},
-                        status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AvatarView(views.APIView):
@@ -163,7 +162,6 @@ class FollowListView(generics.ListAPIView):
 
     serializer_class = FollowReadSerializer
     permission_classes = (permissions.IsAuthenticated,)
-    pagination_class = LimitOffsetPagination
 
     def get_queryset(self):
         return User.objects.filter(following__user=self.request.user)
@@ -192,7 +190,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('name',)
+    search_fields = ('^name',)
     pagination_class = None
 
 
