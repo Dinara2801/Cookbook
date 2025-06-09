@@ -11,7 +11,7 @@ from rest_framework.response import Response
 
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (FollowReadSerializer, IngredientSerializer, 
+from .serializers import (FollowReadSerializer, IngredientSerializer,
                           PasswordChangeSerializer, RecipeWriteSerializer,
                           ShortRecipeLinkSerializer, TagSerializer,
                           UserAvatarUploadSerializer,

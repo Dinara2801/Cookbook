@@ -2,7 +2,6 @@ from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ValidationError
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from rest_framework import serializers
 
 from .validators import UsernameValidator, validate_ingredients, validate_tags
 import core.constants as cnsts
