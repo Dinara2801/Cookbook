@@ -191,7 +191,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
     def validate(self, data):
         validate_ingredients(data.get('ingredients'))
         validate_tags(data.get('tags'))
-        
+
         if data.get('image') in [None, '']:
             raise serializers.ValidationError(
                 {'image': 'Это поле обязательно.'}
