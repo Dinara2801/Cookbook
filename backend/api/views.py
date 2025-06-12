@@ -1,26 +1,38 @@
 from io import BytesIO
-from django.db.models import F, Sum, Count, Prefetch
+
+from django.db.models import Count, F, Prefetch, Sum
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
-from djoser.views import UserViewSet as DjoserUserViewSet
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet as DjoserUserViewSet
 from rest_framework import filters, permissions, status, viewsets
 from rest_framework.decorators import action
-from rest_framework.exceptions import NotAuthenticated
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 
 from .filters import RecipeFilter
 from .permissions import IsAuthorOrReadOnly
-from .serializers import (FollowReadSerializer, FollowCreateSerializer,
-                          IngredientSerializer,
-                          FavoriteSerializer, RecipeWriteSerializer,
-                          ShortRecipeLinkSerializer, TagSerializer,
-                          UserSerializer, UserAvatarUploadSerializer,
-                          ShoppingCartSerializer)
+from .serializers import (
+    FavoriteSerializer,
+    FollowCreateSerializer,
+    FollowReadSerializer,
+    IngredientSerializer,
+    RecipeWriteSerializer,
+    ShoppingCartSerializer,
+    ShortRecipeLinkSerializer,
+    TagSerializer,
+    UserAvatarUploadSerializer,
+    UserSerializer
+)
 from core.shopping_cart import generate_shopping_list_text
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientInRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag
+)
 from users.models import Follow, User
 
 

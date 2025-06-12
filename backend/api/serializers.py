@@ -1,15 +1,23 @@
-from drf_extra_fields.fields import Base64ImageField
 from django.db import transaction
 from django.urls import reverse
 from djoser.serializers import UserSerializer as DjoserUserSerializer
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from .validators import validate_ingredients, validate_tags
-from core.serializers import (BaseFavoriteShoppingCartSerializer,
-                              ShortRecipeSerializer)
+from core.serializers import (
+    BaseFavoriteShoppingCartSerializer,
+    ShortRecipeSerializer
+)
 from core.short_links import encode_id
-from recipes.models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                            ShoppingCart, Tag)
+from recipes.models import (
+    Favorite,
+    Ingredient,
+    IngredientInRecipe,
+    Recipe,
+    ShoppingCart,
+    Tag
+)
 from users.models import Follow, User
 
 
