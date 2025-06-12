@@ -52,7 +52,7 @@ class Follow(models.Model):
         User,
         on_delete=models.CASCADE,
         related_name='subscribers',
-        verbose_name='Подписчик'
+        verbose_name='Подписан на'
     )
 
     class Meta:
@@ -62,12 +62,12 @@ class Follow(models.Model):
                 name='unique_user_author'
             ),
         )
-        verbose_name = 'подписчик'
-        verbose_name_plural = 'Подписчики'
+        verbose_name = 'подписку'
+        verbose_name_plural = 'Подписки'
 
     def clean(self):
         if self.user == self.author:
             raise ValidationError('Нельзя подписаться на самого себя.')
 
     def __str__(self):
-        return f'{self.author.username} подписан на {self.user.username}'
+        return f'{self.user.username} подписан на {self.author.username}'
