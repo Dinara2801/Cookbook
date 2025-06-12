@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -24,13 +25,18 @@ class User(AbstractUser):
     )
     avatar = models.ImageField(
         'Фото',
-        upload_to='users/images/'
+        upload_to='users/images/',
+        null=True,
+        blank=True
     )
 
     class Meta:
         ordering = ('username',)
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    def __str__(self):
+        return self.username
 
 
 class Follow(models.Model):
@@ -39,29 +45,29 @@ class Follow(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='follower',
+        related_name='subscriptions',
         verbose_name='Пользователь'
     )
-    following = models.ForeignKey(
+    author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following',
+        related_name='subscribers',
         verbose_name='Подписчик'
     )
 
     class Meta:
         constraints = (
             models.UniqueConstraint(
-                fields=('user', 'following'),
-                name='unique_user_following'
-            ),
-            models.CheckConstraint(
-                name='prevent_self_follow',
-                check=~models.Q(user=models.F('following')),
+                fields=('user', 'author'),
+                name='unique_user_author'
             ),
         )
         verbose_name = 'подписчик'
         verbose_name_plural = 'Подписчики'
 
+    def clean(self):
+        if self.user == self.author:
+            raise ValidationError('Нельзя подписаться на самого себя.')
+
     def __str__(self):
-        return f'{self.following.username} подписан на {self.user.username}'
+        return f'{self.author.username} подписан на {self.user.username}'
