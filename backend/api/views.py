@@ -46,6 +46,7 @@ class UserViewSet(DjoserUserViewSet):
         if recipes_limit and recipes_limit.isdigit():
             context['recipes_limit'] = int(recipes_limit)
         return context
+
     @action(
         detail=False,
         methods=('get',),
@@ -265,5 +266,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             buffer,
             content_type='text/plain; charset=utf-8'
         )
-        response['Content-Disposition'] = 'attachment; filename="shopping_list.txt"'
+        response[
+            'Content-Disposition'
+        ] = 'attachment; filename="shopping_list.txt"'
         return response
