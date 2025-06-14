@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
+from django.contrib.auth.admin import UserAdmin as DjangoUserAdmin
 from django.db.models import Count
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
@@ -8,7 +8,7 @@ from .models import Follow, User
 
 
 @admin.register(User)
-class UserAdminConfig(UserAdmin):
+class UserAdmin(DjangoUserAdmin):
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
         (_('Personal info'), {
@@ -30,7 +30,7 @@ class UserAdminConfig(UserAdmin):
     list_display = (
         'username', 'email', 'avatar', 'image_preview',
         'first_name', 'last_name', 'is_staff', 'is_active',
-        'recipes_count', 'subscribers_count',
+        'recipes_count', 'author_subscriptions_count',
     )
     search_fields = ('username', 'email')
     ordering = ('username',)
@@ -48,7 +48,9 @@ class UserAdminConfig(UserAdmin):
         qs = super().get_queryset(request)
         return qs.annotate(
             _recipes_count=Count('recipes', distinct=True),
-            _subscribers_count=Count('subscribers', distinct=True),
+            _author_subscriptions_count=Count(
+                'author_subscriptions', distinct=True
+            ),
         )
 
     @admin.display(description='Количество рецептов')
@@ -56,8 +58,8 @@ class UserAdminConfig(UserAdmin):
         return getattr(obj, '_recipes_count', 0)
 
     @admin.display(description='Количество подписчиков')
-    def subscribers_count(self, obj):
-        return getattr(obj, '_subscribers_count', 0)
+    def author_subscriptions_count(self, obj):
+        return getattr(obj, '_author_subscriptions_count', 0)
 
 
 @admin.register(Follow)

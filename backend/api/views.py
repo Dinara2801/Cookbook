@@ -40,13 +40,6 @@ class UserViewSet(DjoserUserViewSet):
     queryset = User.objects.all()
     pagination_class = LimitOffsetPagination
 
-    def get_follow_context(self, request):
-        context = self.get_serializer_context()
-        recipes_limit = request.query_params.get('recipes_limit')
-        if recipes_limit and recipes_limit.isdigit():
-            context['recipes_limit'] = int(recipes_limit)
-        return context
-
     @action(
         detail=False,
         methods=('get',),
@@ -86,10 +79,7 @@ class UserViewSet(DjoserUserViewSet):
     def delete_avatar(self, request):
         """Метод для удаления аватара текущего пользователя."""
         user = request.user
-        if user.avatar:
-            user.avatar.delete(save=False)
-            user.avatar = None
-            user.save()
+        user.avatar.delete(save=True)
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(
@@ -100,10 +90,10 @@ class UserViewSet(DjoserUserViewSet):
     def subscriptions(self, request):
         """Метод для просмотра всех подписок пользователя."""
         page = self.paginate_queryset(User.objects.filter(
-            subscribers__user=request.user
-        ).annotate(recipes_count=Count('recipes')))
+            author_subscriptions__user=request.user
+        ).annotate(recipes_count=Count('recipes')).order_by('username'))
         serializer = FollowReadSerializer(
-            page, many=True, context=self.get_follow_context(request)
+            page, many=True, context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
 
@@ -115,18 +105,15 @@ class UserViewSet(DjoserUserViewSet):
     def subscribe(self, request, id=None):
         """Метод для создания подписки на автора."""
         author = get_object_or_404(User, id=id)
-        context = self.get_follow_context(request)
         serializer = FollowCreateSerializer(
-            data={'author': author.id},
-            context=context
+            data={'author': author.id, 'user': request.user.id},
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        annotated_author = User.objects.annotate(
-            recipes_count=Count('recipes')
-        ).get(id=author.id)
+
         return Response(
-            FollowReadSerializer(annotated_author, context=context).data,
+            serializer.data,
             status=status.HTTP_201_CREATED
         )
 
@@ -138,11 +125,13 @@ class UserViewSet(DjoserUserViewSet):
             user=request.user,
             author=author
         ).delete()
-        if deleted:
-            return Response(status=status.HTTP_204_NO_CONTENT)
-        return Response(
-            {'errors': 'Вы не подписаны на этого пользователя.'},
-            status=status.HTTP_400_BAD_REQUEST
+        return (
+            Response(status=status.HTTP_204_NO_CONTENT)
+            if deleted else
+            Response(
+                {'errors': 'Вы не подписаны на этого пользователя.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         )
 
 

@@ -46,8 +46,7 @@ class UserSerializer(DjoserUserSerializer):
         request = self.context['request']
         return (
             request.user.is_authenticated
-            and obj is not None
-            and obj.subscribers.filter(user=request.user).exists()
+            and obj.author_subscriptions.filter(user=request.user).exists()
         )
 
 
@@ -61,9 +60,6 @@ class UserAvatarUploadSerializer(serializers.ModelSerializer):
 
 class FollowCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания подписки."""
-
-    user = serializers.HiddenField(default=serializers.CurrentUserDefault())
-    author = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Follow
@@ -85,12 +81,10 @@ class FollowCreateSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         request = self.context.get('request')
-        recipes_limit = self.context.get('recipes_limit')
         return FollowReadSerializer(
             instance.author,
             context={
-                'request': request,
-                'recipes_limit': recipes_limit
+                'request': request
             }
         ).data
 
@@ -99,7 +93,7 @@ class FollowReadSerializer(UserSerializer):
     """Сериализатор подписок с краткой информацией о рецептах."""
 
     recipes = serializers.SerializerMethodField()
-    recipes_count = serializers.IntegerField(read_only=True)
+    recipes_count = serializers.IntegerField(read_only=True, default=0)
 
     class Meta(UserSerializer.Meta):
         fields = UserSerializer.Meta.fields + (
@@ -110,7 +104,9 @@ class FollowReadSerializer(UserSerializer):
         recipes = obj.recipes.all()
 
         try:
-            recipes = recipes[:int(self.context.get('recipes_limit'))]
+            recipes = recipes[:int(
+                self.context.get('request').query_params.get('recipes_limit')
+            )]
         except (TypeError, ValueError):
             pass
 
@@ -156,8 +152,7 @@ class IngredientInRecipeWriteSerializer(serializers.ModelSerializer):
     """Сериализатор ингредиента в рецепте (только для записи)."""
 
     id = serializers.PrimaryKeyRelatedField(
-        queryset=Ingredient.objects.all(),
-        source='ingredient'
+        queryset=Ingredient.objects.all()
     )
     amount = serializers.IntegerField(
         min_value=1,
@@ -188,14 +183,14 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
             'name', 'text', 'cooking_time'
         )
 
+    def validate_image(self, value):
+        if value in (None, ''):
+            raise serializers.ValidationError('Это поле обязательно.')
+        return value
+
     def validate(self, data):
         validate_ingredients(data.get('ingredients'))
         validate_tags(data.get('tags'))
-
-        if data.get('image') in [None, '']:
-            raise serializers.ValidationError(
-                {'image': 'Это поле обязательно.'}
-            )
         return data
 
     @staticmethod
@@ -203,7 +198,7 @@ class RecipeWriteSerializer(serializers.ModelSerializer):
         IngredientInRecipe.objects.bulk_create([
             IngredientInRecipe(
                 recipe=recipe,
-                ingredient=ingredient_data['ingredient'],
+                ingredient=ingredient_data['id'],
                 amount=ingredient_data['amount']
             )
             for ingredient_data in ingredients_data
@@ -263,16 +258,20 @@ class RecipeReadSerializer(serializers.ModelSerializer):
         )
 
     def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return obj.in_favorites.filter(user=request.user).exists()
+        request = self.context['request']
+        return (
+            request
+            and request.user.is_authenticated
+            and obj.in_favorites.filter(user=request.user).exists()
+        )
 
     def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return obj.in_shoppingcarts.filter(user=request.user).exists()
+        request = self.context['request']
+        return (
+            request
+            and request.user.is_authenticated
+            and obj.in_shoppingcarts.filter(user=request.user).exists()
+        )
 
 
 class ShortRecipeLinkSerializer(serializers.Serializer):

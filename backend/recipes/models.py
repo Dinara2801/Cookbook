@@ -68,8 +68,16 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         'Время приготовления (в минутах)',
         validators=(
-            MinValueValidator(cnsts.MIN_TIME_QUANTITY),
-            MaxValueValidator(cnsts.MAX_TIME_QUANTITY)
+            MinValueValidator(
+                cnsts.MIN_TIME_QUANTITY,
+                message='Время приготовления не может быть меньше '
+                f'{cnsts.MIN_TIME_QUANTITY} минут.'
+            ),
+            MaxValueValidator(
+                cnsts.MAX_TIME_QUANTITY,
+                message='Время приготовления не может превышать '
+                f'{cnsts.MAX_TIME_QUANTITY} минут.'
+            ),
         )
     )
     image = models.ImageField(

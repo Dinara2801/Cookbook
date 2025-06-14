@@ -5,7 +5,7 @@ def validate_ingredients(ingredients):
     if not ingredients:
         raise serializers.ValidationError('Добавьте хотя бы один ингредиент.')
 
-    ingredient_ids = [item.get('ingredient') for item in ingredients]
+    ingredient_ids = [item.get('id') for item in ingredients]
     if len(ingredient_ids) != len(set(ingredient_ids)):
         raise serializers.ValidationError('Ингредиенты не должны повторяться.')
 
