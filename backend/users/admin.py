@@ -30,7 +30,7 @@ class UserAdmin(DjangoUserAdmin):
     list_display = (
         'username', 'email', 'avatar', 'image_preview',
         'first_name', 'last_name', 'is_staff', 'is_active',
-        'recipes_count', 'author_subscriptions_count',
+        'recipes_count', 'subscriptions_on_author_count',
     )
     search_fields = ('username', 'email')
     ordering = ('username',)
@@ -48,8 +48,8 @@ class UserAdmin(DjangoUserAdmin):
         qs = super().get_queryset(request)
         return qs.annotate(
             _recipes_count=Count('recipes', distinct=True),
-            _author_subscriptions_count=Count(
-                'author_subscriptions', distinct=True
+            _subscriptions_on_author_count=Count(
+                'subscriptions_on_author', distinct=True
             ),
         )
 
@@ -58,8 +58,8 @@ class UserAdmin(DjangoUserAdmin):
         return getattr(obj, '_recipes_count', 0)
 
     @admin.display(description='Количество подписчиков')
-    def author_subscriptions_count(self, obj):
-        return getattr(obj, '_author_subscriptions_count', 0)
+    def subscriptions_on_author_count(self, obj):
+        return getattr(obj, '_subscriptions_on_author_count', 0)
 
 
 @admin.register(Follow)

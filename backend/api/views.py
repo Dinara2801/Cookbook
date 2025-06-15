@@ -90,7 +90,7 @@ class UserViewSet(DjoserUserViewSet):
     def subscriptions(self, request):
         """Метод для просмотра всех подписок пользователя."""
         page = self.paginate_queryset(User.objects.filter(
-            author_subscriptions__user=request.user
+            subscriptions_on_author__user=request.user
         ).annotate(recipes_count=Count('recipes')).order_by('username'))
         serializer = FollowReadSerializer(
             page, many=True, context={'request': request}

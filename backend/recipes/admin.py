@@ -51,11 +51,11 @@ class CookingTimeFilter(SimpleListFilter):
         if self.value() == 'medium':
             return queryset.filter(
                 cooking_time__gte=cnsts.SHORT_COOKING_TIME,
-                cooking_time__lte=cnsts.LONG_COOKING_TIME
+                cooking_time__lte=60
             )
         if self.value() == 'long':
             return queryset.filter(
-                cooking_time__gt=cnsts.LONG_COOKING_TIME
+                cooking_time__gt=60
             )
         return queryset
 
