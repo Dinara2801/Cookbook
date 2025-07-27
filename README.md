@@ -1,4 +1,4 @@
-[![Main Foodgram workflow](https://github.com/Dinara2801/Tasyideas/actions/workflows/main.yml/badge.svg)](https://github.com/Dinara2801/Tasyideas/actions/workflows/main.yml)
+[![Main Tasyideas workflow](https://github.com/Dinara2801/Tasyideas/actions/workflows/main.yml/badge.svg)](https://github.com/Dinara2801/Tasyideas/actions/workflows/main.yml)
 
 # Проект Tasyideas
 
