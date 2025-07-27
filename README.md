@@ -1,8 +1,8 @@
 [![Main Foodgram workflow](https://github.com/Dinara2801/foodgram/actions/workflows/main.yml/badge.svg)](https://github.com/Dinara2801/foodgram/actions/workflows/main.yml)
 
-# Проект Cookbook
+# Проект Tasyideas
 
-Foodgram — это сервис для создания, хранения и обмена рецептами. Позволяет пользователям создавать рецепты с ингредиентами и тегами, управлять ими, добавлять в избранное и в список покупок. Проект доступен по адресу https://tastyideas.sytes.net/
+Tasyideas — это сервис для создания, хранения и обмена рецептами. Позволяет пользователям создавать рецепты с ингредиентами и тегами, управлять ими, добавлять в избранное и в список покупок. Проект доступен по адресу https://tastyideas.sytes.net/
 
 ## Описание проекта
 
